@@ -213,7 +213,7 @@ int main()
 
 Yukarıdaki örnekte pi sayısnı sabit olarak tanımladık ve dairenin yarıçapını belirledik. Daha sonra bu belirlediğimiz değerler eşliğinde dairenin alanı hesaplanıp ekrana yazdırdık. Programın çıktısı şu şekildedir:
 
-Dairenin alani:452.16
+   Dairenin alani:452.16
 
 
 ==== Auto Deyimi
