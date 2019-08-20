@@ -159,7 +159,11 @@ Yukarıdaki örnekte gol_at isminde fonksiyon oluşturduk. Bu fonksiyon: gol ism
 
 Programın çıktısı bu şekildedir:
 
-http://firateski.com/wp-content/uploads/2015/11/static-degisken.bmp
+   Gol sayisi:1
+   Gol sayisi:2
+   Gol sayisi:3
+   Gol sayisi:4
+
 
 Eğer biz gol ismindeki değişkeni static olarak tanımlamasaydık ekrana yazdırılan değer her seferinde 1(bir) olacaktı çünkü değişkene ilk değer olarak 0(sıfır) değerini verdik ve ekrana yazdırmadan önce değeri 1(bir) tane arttırdık. Dolayısıyla Static değişken sayesinde değişken; fonksiyon her çağrıldığında yeniden oluşturulmak yerine sadece ilk seferde oluşturulup, sonrasında global değişkenler gibi değeri korunabiliyor. Bu örnekle birlikte static kavramının nasıl kullanıldığını ve mantığını anladık.
 
@@ -209,7 +213,7 @@ int main()
 
 Yukarıdaki örnekte pi sayısnı sabit olarak tanımladık ve dairenin yarıçapını belirledik. Daha sonra bu belirlediğimiz değerler eşliğinde dairenin alanı hesaplanıp ekrana yazdırdık. Programın çıktısı şu şekildedir:
 
-http://firateski.com/wp-content/uploads/2015/11/sabit-degisken.bmp
+Dairenin alani:452.16
 
 
 ==== Auto Deyimi
