@@ -39,7 +39,10 @@ int main()
 
 Programın çıktısı şu şekilde olmalıdır:
 
-https://i0.wp.com/firateski.com/wp-content/uploads/2015/12/dort-islem-ornek.png
+       iki sayinin toplami:12
+       iki sayinin farki: 4
+       iki sayinin carpimi:32 
+       iki sayinin bolumu:2
 
 Art arda cout kodu yazmak yerine bu işlemi şu kodla da yapabilirdik:
 
@@ -86,7 +89,12 @@ int main()
 
 Programın çıktısı şu şekilde olmalıdır:
 
-https://i2.wp.com/firateski.com/wp-content/uploads/2015/12/dort-islem-ornek2.png
+       ilk sayiyi giriniz:6
+       ikinci sayiyi giriniz:2
+       iki sayinin toplami:8
+       iki sayinin farki: 4
+       iki sayinin carpimi:12 
+       iki sayinin bolumu:3
 
 ====== Mod Alma İşlemi
 
@@ -116,7 +124,9 @@ int main()
 
 Programın çıktısı şu şekilde:
 
-https://i2.wp.com/firateski.com/wp-content/uploads/2015/12/mod-alma-ornek.png
+     8 mod 4: 0
+     8 mod 3: 2
+     4 mod 3: 1
 
 
 
