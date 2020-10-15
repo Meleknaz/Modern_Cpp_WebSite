@@ -1,0 +1,27 @@
+= Bilgisayarlı Görü ve Görüntü İşleme için Modern C ++
+:TOC:
+
+== 1. ÖZET
+
+Bu seride 
+
+* Move semantics 
+* Classes  
+** Operator overloading(Operatör aşırı yükleme)  
+** Making your class copyable(Sınıfınızı kopyalanabilir hale getirme)  
+** Making your class movable(Sınıfınızı hareketli hale getirmek)  
+** Rule of all or nothing(Ya hep ya hiç kuralı)  
+** Inheritance
+
+örneklerle anlatılmaktadır.
+
+
+== 2. Intuition lvalues(soldeğer), rvalues(sağdeğer)
+
+Her ifade bir ldeğer veya bir değerdir
+Ldeğerler atama operatörünün soluna yazılabilir (=)
+Rdeğerler diğer tüm ifadelerdir
+&& kullanılarak tanımlanan açık rvalue
+Bir ldeğerini açıkça bir r değerine dönüştürmek için std :: move (…) kullanın
+
+== Referanslar
