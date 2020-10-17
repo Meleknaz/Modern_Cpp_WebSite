@@ -18,10 +18,331 @@ Bu seride
 
 == 2. Intuition lvalues(soldeğer), rvalues(sağdeğer)
 
-Her ifade bir ldeğer veya bir değerdir
-Ldeğerler atama operatörünün soluna yazılabilir (=)
-Rdeğerler diğer tüm ifadelerdir
-&& kullanılarak tanımlanan açık rvalue
-Bir ldeğerini açıkça bir r değerine dönüştürmek için std :: move (…) kullanın
+* Her ifade bir ldeğer veya bir rdeğer alır
+* Ldeğerler atama operatörünün(=) soluna yazılabilir 
+* Rdeğerler diğer tüm ifadelerdir
+* Belirgin(açık) rdeğerini tanımlarken && kullanın
+* Bir ldeğerini açıkça bir rdeğerine dönüştürmek için std :: move (…) kullanın
+
+[source, C++]
+----
+ int a; // "a" is an lvalue
+ int& a_ref = a; // "a" is an lvalue
+ // "a_ref" is a reference to an lvalue
+ a = 2 + 2; // "a" is an lvalue ,
+ // "2 + 2" is an rvalue
+ int b = a + 2; // "b" is an lvalue ,
+ // "a + 2" is an rvalue
+ int&& c = std :: move(a); // "c" is an rvalue
+----
+
+=== 2.1 Uygulamalı örnek
+[source, C++]
+----
+ #include <iostream>
+ #include <string>
+ using namespace std; // Save space on slides.
+ void Print(const string& str) {
+ cout << "lvalue: " << str << endl;
+ }
+ void Print(string && str) {
+ cout << "rvalue: " << str << endl;
+ }
+ int main () {
+ string hello = "hi";
+ Print(hello);
+ Print("world");
+ Print(std :: move(hello));
+ // DO NOT access "hello" after move!
+ return 0;
+ }
+----
+[IMPORTANT]
+====
+Taşımadan sonra değerlere asla erişme
+Taşıma sonrası değer tanımsız
+[source, C++]
+----
+ #include <iostream>
+ #include <string>
+ #include <vector>
+ using namespace std; // Save space on slides.
+ int main () {
+ string hello = "hello";
+ vector <string > owner;
+ owner. emplace_back (hello); // Copy.
+ owner. emplace_back (move(hello)); // Move.
+ cout << hello << endl; // Undefined.
+ return 0;
+ }
+----
+====
+
+=== 2.2. Std :: move hakkında nasıl düşünülür
+* Sahipliği düşünün, varlık, onu silerse bir değişkene sahiptir, örn.
+** Bir fonksiiyon kapsamı( scope alanı), içinde tanımlanan bir değişkene sahiptir
+** Bir sınıfın bir nesnesi, veri üyelerine sahiptir
+* Bir değişkeni taşımak, kaynaklarının sahipliğini başka bir değişkene aktarır
+* Programınızı tasarlarken 'bu şeye kim sahip olmalı?' Diye düşünün.
+* Çalışma zamanı(Runtime): kopyalamadan daha iyi, referansla geçmekten(passing by reference) daha kötü
+
+=== 2.3. Bir sınıf için özel operatörler
+* Operatörler imzalı fonksiyonlardır:
+*<RETURN_TYPE> operator<NAME>(<PARAMS>)*
+* <NAME> hedef işlemi temsil eder, ör. >, <, =, ==, << vb.
+* Fonksiyonların tüm özelliklerine sahip olun
+* Her zaman adında kelime operatörü içerir
+* http://en.cppreference.com/w/cpp/language/operators[Mevcut tüm operatörler]
+
+=== 2.4 Örnek
+[source, C++]
+----
+ #include <algorithm>
+ #include <vector>
+ using namespace std;
+ class Human {
+ public:
+ Human(int kindness) : kindness_ {kindness } {}
+ bool operator <(const Human& other) const {
+ return kindness_ < other. kindness_ ;
+ }
+ private:
+ int kindness_ = 100;
+ };
+ int main () {
+ vector <Human > humans = {Human {0}, Human {10}};
+ std :: sort(humans.begin (), humans.end ());
+ return 0;
+ }
+----
+=== 2.5. Yapıcıyı kopyala(Copy constructor)
+* Nesne kopyalandığında otomatik olarak çağrılır
+* MyClass sınıfı için şu imzaya sahiptir: MyClass(const MyClass& other)
+
+[source, C++]
+----
+ MyClass a; // Calling default constructor.
+ MyClass b(a); // Calling copy constructor.
+ MyClass c = a; // Calling copy constructor.
+----
+
+=== 2.6. Atama operatörünü kopyala(Copy assignment operator)
+* Kopyalama atama operatörü, nesneye bir Lvalue'dan yeni bir değer atandığında otomatik olarak çağrılır
+* MyClass sınıfı için şu imzaya sahiptir: MyClass& operator=(const MyClass& other)
+* Değiştirilen nesneye bir referans verir
+* Mevcut nesneye bir referans almak için bir sınıfın fonksiyonu içinde *this kullanın
+
+[source, C++]
+----
+ MyClass a; // Calling default constructor.
+ MyClass b(a); // Calling copy constructor.
+ MyClass c = a; // Calling copy constructor.
+ a = b; // Calling copy assignment operator.
+----
+
+=== 2.7. Yapıcıyı taşı(Move constructor)
+* Nesne taşındığında otomatik olarak çağrılır
+* MyClass sınıfı için şu imzaya sahiptir:
+MyClass(MyClass&& other)
+
+[source, C++]
+----
+ MyClass a; // Default constructors.
+ MyClass b(std :: move(a)); // Move constructor.
+ MyClass c = std :: move(a); // Move constructor.
+----
+
+=== 2.8 Atama operatörünü taşı(Move assignment operator)
+* Nesneye bir Rvalue den yeni bir değer atandığında otomatik olarak çağrılır
+* MyClass sınıfı için şu imzaya sahiptir:
+MyClass& operator=(MyClass&& other)
+* Değiştirilen nesneye bir referans verir
+
+[source, C++]
+----
+ MyClass a; // Default constructors.
+ MyClass b(std :: move(a)); // Move constructor.
+ MyClass c = std :: move(a); // Move constructor.
+ b = std :: move(c); // Move assignment operator.
+----
+
+[source, C++]
+----
+ #include <iostream>
+ using std :: cout; using std :: endl;
+ class Hmm {
+ public:
+ Hmm () { cout << "default" << endl; }
+ Hmm(const Hmm& other) { cout << "copy" << endl; }
+ Hmm(Hmm && other) { cout << "move" << endl; }
+ Hmm& operator=(const Hmm& other) {
+ cout << "copy operator" << endl; return *this;
+ }
+ Hmm& operator=( Hmm && other) {
+ cout << "move operator" << endl; return *this;
+ }
+ };
+ int main () {
+ Hmm a;
+ Hmm b = a;
+ a = b;
+ Hmm c = std :: move(a);
+ c = std :: move(b);
+ return 0;
+ }
+----
+
+[NOTE]
+====
+*Hepsini tanımlamam gerekiyor mu?*
+
+* Yapıcılar ve operatörler bazı durumlarda otomatik olarak oluşturulacaktır ...
+* MyClass sınıfı için özel beş fonksiyon:
+
+[source, C++]
+----
+~MyClass()
+MyClass(const MyClass& other)
+MyClass(MyClass&& other)
+MyClass& operator=(const MyClass& other)
+MyClass& operator=(MyClass&& other)
+----
+* Hiçbiri tanımlanmadı: tümü otomatik oluşturuldu
+* Bunlardan herhangi biri tanımlandı: hiçbiri otomatik oluşturulmadı
+====
+
+=== 2.9. Ya hep ya hiç kuralı
+* Özel fonksiyonlardan hiçbirini tanımlamaya çalışmayın
+* Bunlardan birini tanımlamanız gerekiyorsa, hepsini tanımlayın
+* Varsayılan uygulamayı kullanmak için *=default* kullanın
+
+[source, C++]
+----
+ class MyClass {
+ public:
+ MyClass () = default;
+ MyClass(MyClass && var) = default;
+ MyClass(const MyClass& var) = default;
+ MyClass& operator=( MyClass && var) = default;
+ MyClass& operator=(const MyClass& var) = default;
+ };
+----
+
+[TIP]
+====
+https://arne-mertz.de/2015/02/the-rule-of-zero-revisited-the-rule-of-all-or-nothing/[Bakınız 1]
+
+http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#cdefop-default-operations[Bakınız 2]
+====
+
+=== 2.10. Deleted functions(Silinmiş fonksiyonlar)
+* Herhangi bir fonksiyonu *deleted* olarak ayarlanabilir
+
+[source, c++]
+----
+void SomeFunc (...) = delete;
+----
+* Böyle bir fonksiyonu çağırmak derleme hatasına(compilation error) neden olur 
+* **Örnek**: sınıfın yalnızca bir örneğinin garanti edilmesi gerektiğinde kopya oluşturucuları(constructors) kaldırın
+* Derleyici, otomatik olarak silinen bazı işlevleri işaretlerv
+* *Örnek:* Bir sınıfın sabit bir veri üyesi varsa, kopyalama / taşıma yapıcıları(constructors) ve atama operatörleri dolaylı olarak silinir
+
+== 3. Inheritance(miras)
+* Sınıflar ve yapılar diğer sınıflardan veri ve fonksiyonları devralabilir
+* C ++ 'da 3 tür kalıtım vardır:
+** Public https://google.github.io/styleguide/cppguide.html#Inheritance[GOOGLE-STYLE] korumalı
+** protected
+** Private
+** Public inheritance, temel sınıfın tüm erişim belirticilerini korur
+
+=== 3.1. Public inheritance
+* Public inheritance stands for “is a”
+relationship, i.e. if class Derived inherits
+publicly from class Base we say, that
+Derived is a kind of Base
+
+[source, C++]
+----
+ class Derived : public Base {
+ // Contents of the derived class.
+ };
+----
+* Allows Derived to use all public and
+protected members of Base
+* Derived still gets its own special functions:
+constructors, destructor, assignment
+operators
+
+[source, C++]
+----
+ #include <iostream>
+ using std :: cout; using std :: endl;
+ class Rectangle {
+ public:
+ Rectangle (int w, int h) : width_{w}, height_{h} {}
+ int width () const { return width_; }
+ int height () const { return height_; }
+ protected:
+ int width_ = 0;
+ int height_ = 0;
+ };
+ class Square : public Rectangle {
+ public:
+ explicit Square(int size) : Rectangle {size , size} {}
+ };
+ int main () {
+ Square sq (10); // Short name to save space.
+ cout << sq.width () << " " << sq.height () << endl;
+ return 0;
+ }
+----
+
+== 4. Function overriding(Fonksiyonu geçersiz kılma)
+
+* Bir işlev *virtual* olarak tanımlanabilir
+
+[source, C++]
+----
+virtual Func(<PARAMS >);
+----
+
+* Fonksiyon Base sınıfında virtual ise, Derived sınıfında geçersiz kılınabilir:
+
+[source, C++]
+----
+Func(<PARAMS >) override;
+----
+
+* Base, tüm  Derived sınıfları pure virtual(saf sanal) yaparak bir fonksiyonu geçersiz kılmaya zorlayabilir
+
+[source, C++]
+----
+virtual Func(<PARAMS >) = 0;
+----
+
+=== 4.1. Aşırı yükleme vs geçersiz kılma(Overloading vs overriding)
+
+* Fonksiyonun aşırı yüklenmesini(Overloading) ve geçersiz kılınmasını(overriding) karıştırmayın
+* *Overloading:*
+** Aynı ada ancak farklı parametrelere sahip tüm fonksiyonlar arasından seçim yapın
+** Derleme zamanında(compile time) bir fonksiyon seçin
+** Fonksiyonların bir sınıfta olması gerekmez
+* *Overriding:*
+** Bir sınıf hiyerarşisinin farklı sınıflarında aynı argümanlara ve adlara sahip fonksiyonlar arasından seçim yapın
+** Çalışma zamanında(runtime) seç
+
+== 5. Soyut sınıflar ve arayüzler(Abstract classes and interfaces)
+* *Abstract class:* en az bir saf sanal(pure virtual) fonksiyonu olan sınıf
+
+* *Interface:* sadece sanal(pure virtual) fonksiyonlara sahip ve veri üyesi olmayan sınıf
+
+== 6. Sanal nasıl çalışır(How virtual works)
+* Sanal fonksiyonlara sahip bir sınıfın sanal bir tablosu vardır
+* Sınıf, bir fonksiyonu çağırırken imzayla eşleşen sanal fonksiyonlardan hangisinin çağrılması gerektiğini kontrol eder.
+* Çalışma zamanı polimorfizmi olarak adlandırılır(Called runtime polymorphism)
+* Biraz zaman alıyor ama çok uygun
 
 == Referanslar
+
+Fluent C++: structs vs classes:
+https://goo.gl/NFo8HP [shortened]
