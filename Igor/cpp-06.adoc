@@ -3,6 +3,138 @@
 
 == 1. ÖZET
 
-== 2. GİRİŞ
+Bu seride 
+
+* Statik değişkenler ve yöntemler ana hatlarıyla(Outline Static variables and methods )
+* Hafızadaki sayıların temsili(Representation of numbers in memory )
+* Ham C dizileri(Raw C arrays )
+* {cpp}'da sahip olmayan işaretçiler(Non-owning pointers in C++)
+* Hafızadaki sınıflar(Classes in memory)
+
+örneklerle anlatılmaktadır.
+
+== 2. Statik değişkenler ve yöntemler
+* Bir sınıfın statik üye değişkenleri
+** Nesne başına değil, sınıf başına tam olarak bir kez bulunur
+** Değer, tüm örneklerde eşittir
+** *.cpp dosyalarında tanımlanmalıdır
+* Bir sınıfın statik üye fonksiyonları
+** Bir sınıfın nesnesine sahip değilsiniz
+** private üyelere erişebilir ancak bir nesneye ihtiyaç duyar
+** Arama için sözdizimi:(Syntax for calling):
+*ClassName::MethodName(<params>)*
+
+=== 2.1. Statik değişkenler(Static variables)
+
+[source, cpp]
+----
+ #include <iostream>
+ using std :: cout; using std :: endl;
+ struct Counted {
+ Counted () { Counted :: count ++; }
+ ~Counted () { Counted ::count --; }
+ static int count; // Static counter member.
+ };
+ int Counted :: count = 0; // Definition.
+ int main () {
+ Counted a, b;
+ cout << "Count: " << Counted :: count << endl;
+ Counted c;
+ cout << "Count: " << Counted :: count << endl;
+ return 0;
+ }
+----
+
+=== 2.2. Statik üye fonksiyonları(Static member functions)
+
+[source, cpp]
+----
+ #include <math.h>
+ #include <iostream>
+ using std :: cout; using std :: endl;
+ class Point {
+ public:
+ Point(int x, int y) : x_(x), y_(y) {}
+ static float dist(const Point& a, const Point& b) {
+ int diff_x = a.x_ - b.x_;
+ int diff_y = a.y_ - b.y_;
+ return sqrt(diff_x * diff_x + diff_y * diff_y);
+ }
+ private:
+ int x_ = 0; int y_ = 0;
+ };
+ int main () {
+ Point a(2, 2), b(1, 1);
+ cout << "Dist is " << Point :: dist(a, b) << endl;
+ return 0;
+ }
+----
+
+== 3. Değişken bildirimini geri çağırma
+
+[source, cpp]
+----
+int x = 1;
+float y = 1.1313f;
+----
+[TIP]
+====
+Hafızada sayı nasıl temsil edilir?
+====
+image::images/memory.png[]
+[TIP]
+====
+Bir tür ne kadar belleğe ihtiyaç duyar?
+====
+
+* Bir tür için bayt sayısını alın:
+*sizeof(<type>)*
+
+image::type.png[]
+
+=== 3.1. sizeof() Örneği
+
+[source, cpp]
+----
+ // machine specific type sizes
+ sizeof(bool) == 1 byte;
+ sizeof(char) == 1 byte;
+ // floating point types
+ sizeof(float) == 4 bytes;
+ sizeof(double) == 8 bytes;
+ sizeof(long double) == 16 bytes;
+ // integral data types
+ sizeof(short int) == 2 bytes;
+ sizeof(unsigned short int) == 2 bytes;
+ sizeof(int) == 4 bytes;
+ sizeof(unsigned int) == 4 bytes;
+ sizeof(long int) == 8 bytes;
+ sizeof(unsigned long int) == 8 bytes;
+----
+
+=== 3.2. Tam sayı türlerini temsil etme
+
+[source, cpp]
+----
+ #include <iostream>
+ using std :: cout;
+ int main () {
+ unsigned short int k = 37;
+ cout << "sizeof(" << k << ") is " << sizeof(k)
+ << " bytes or " << sizeof(k) * 8 << " bits.";
+ }
+----
+
+[source, cpp]
+----
+sizeof(37) is 2 bytes or 16 bit
+----
+
+==== Hafızada temsil:
+
+image::images/byte.png[]
+
+37 = 0 ⋅ 21^5^+⋯+ 1 ⋅ 25+ 0⋅ 24+0 ⋅ 23+1 ⋅ 22+0 ⋅ 21+1 ⋅ 20
+
 
 == Referanslar
