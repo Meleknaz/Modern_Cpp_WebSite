@@ -7,10 +7,10 @@ Bu seride
 
 * Move semantics 
 * Classes  
-** Operator overloading(Operatör aşırı yükleme)  
+** Operator overloading(Operatör aşırı yükleme)
 ** Making your class copyable(Sınıfınızı kopyalanabilir hale getirme)  
 ** Making your class movable(Sınıfınızı hareketli hale getirmek)  
-** Rule of all or nothing(Ya hep ya hiç kuralı)  
+** Rule of all or nothing(Ya hep ya hiç kuralı)
 ** Inheritance
 
 örneklerle anlatılmaktadır.
