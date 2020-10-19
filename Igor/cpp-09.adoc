@@ -1,0 +1,34 @@
+= Bilgisayarlı Görü ve Görüntü İşleme için Modern C ++
+:TOC:
+
+== 1. ÖZET
+
+Bu seride 
+
+* Generic programming
+* Template functions
+* Template classes
+* Iterators
+* Error handling
+* Program input parameters
+* OpenCV
+** cv::Mat
+** cv::Mat I/O
+* SIFT Extraction
+* FLANN in OpenCV
+* OpenCV with CMake 
+
+örneklerle anlatılmaktadır.
+
+== 2. GİRİŞ
+
+== Referanslar
+
+Macros:
+http://en.cppreference.com/w/cpp/preprocessor/replace
+
+Lambda expressions:
+http://en.cppreference.com/w/cpp/language/lambda
+
+OpenCV SIFT:
+https://docs.opencv.org/2.4/modules/nonfree/doc/feature_detection.html

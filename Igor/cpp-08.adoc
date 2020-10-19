@@ -1,0 +1,415 @@
+= Bilgisayarlı Görü ve Görüntü İşleme için Modern C ++
+:TOC:
+
+== 1. ÖZET
+Bu seride 
+
+* Akıllı işaretçiler(Smart pointers)
+** Benzersiz işaretçi(Unique pointer)
+** Paylaşılan işaretçi(Shared pointer)
+* Çağrışımsal kapsayıcılar(Associative containers)
+* Type casting
+** static_cast
+** reinterpret_cast
+** dynamic_cast
+* Numaralandırma sınıfları(Enumeration classes)
+* İkili dosyaları oku/yaz(Read/write binary files)
+
+örneklerle anlatılmaktadır.
+
+== 2. Smart pointers
+
+* Akıllı işaretçiler bir ham işaretçiyi bir sınıfa sarar ve ömrünü yönetir(RAII)
+* Akıllı işaretçiler tamamen sahiplikle ilgilidir
+* İşaretçinin *kendi yığın(heap) belleğine* sahip olması gerektiğinde her zaman akıllı işaretçiler kullanın
+
+[CAUTION]
+====
+Bunları yalnızca yığın bellekle(heap memory) kullanın!
+====
+
+* Yine de sahip olmayan işaretçiler ve basit adres depolaması için ham işaretçileri kullanın
+* *#include <memory>* akıllı işaretçiler kullanmak için
+* 2 tür akıllı işaretleyiciye odaklanacağız:
+** std::unique_ptr
+** std::shared_ptr
+
+[NOTE]
+====
+ Akıllı işaretçiler hafızayı yönetir!
+====
+
+
+Bellek ayırma dışında akıllı işaretçiler tam olarak ham işaretçiler gibi davranır:
+
+* Nullptr olarak ayarlanabilir
+* ptr'yi referanstan ayırmak için *** ptr **kullanın
+* Metodlara erişmek için *ptr->* kullanın
+* Akıllı işaretçiler çokbiçimlidir
+
+===== Akıllı işaretçilerin ek işlevleri:
+* *ptr.get()* akıllı işaretçinin yönettiği ham bir işaretçi döndürür
+* **ptr.reset(raw_ptr)**, o anda yönetilen işaretçiyi kullanmayı durdurur, gerekirse belleğini boşaltır, **ptr**'yi **raw_ptr**'ye ayarlar
+
+=== 2.1. Benzersiz işaretçi (std::unique_ptr)
+
+* Benzersiz bir işaretçinin kurucusu, sağlanan ham işaretçinin sahipliğini alır
+* Ham bir işaretçi üzerinde çalışma süresi ek yükü yok
+* Türü yazmak için benzersiz bir işaretçi için sözdizimi:
+
+[source, C++]
+----
+ #include <memory >
+ // Using default constructor Type();
+ auto p = std :: unique_ptr <Type >(new Type);
+ // Using constructor Type(<params >);
+ auto p = std :: unique_ptr <Type >(new Type(<params >));
+----
+
+* C ++ 14'ten:
+
+[source, C++]
+----
+ // Forwards <params > to constructor of unique_ptr
+ auto p = std :: make_unique <Type >(<params >);
+----
+
+http://https://en.cppreference.com/w/cpp/memory/unique_ptr[unique_ptr]
+
+==== 2.1.1. Onu 'benzersiz' yapan nedir?
+* Benzersiz işaretçinin kopya yapıcısı(constructor) yoktur
+* Kopyalanamaz, taşınabilir
+* Belleğin her zaman tek bir benzersiz işaretçiye ait olduğunu garanti eder
+
+[source, C++]
+----
+ #include <iostream>
+ #include <memory>
+ struct A {
+ int a = 10;
+ };
+ int main () {
+ auto a_ptr = std :: unique_ptr <A>(new A);
+ std :: cout << a_ptr ->a << std :: endl;
+ auto b_ptr = std :: move(a_ptr);
+ std :: cout << b_ptr ->a << std :: endl;
+ return 0;
+ }
+----
+
+=== 2.2. Paylaşılan işaretçi (std :: shared_ptr)
+
+* unique_ptr gibi oluşturulmuştur
+* Kopyalanabilir
+* Bir kullanım sayacı ve bir ham işaretçi depolar
+** Kopyalandığında kullanım sayacını artırır
+** İmha edildiğinde kullanım sayacını azaltır
+* Sayaç 0'a ulaştığında hafızayı boşaltır
+* Unique_ptr'den başlatılabilir
+
+https://en.cppreference.com/w/cpp/memory/shared_ptr[shared_ptr]
+
+[source, C++]
+----
+ #include <memory>
+ // Using default constructor Type();
+ auto p = std :: shared_ptr <Type >(new Type);
+ auto p = std :: make_shared <Type >(); // Preferred
+ // Using constructor Type(<params >);
+ auto p = std :: shared_ptr <Type >(new Type(<params >));
+ auto p = std :: make_shared <Type >(<params >); // Preferred
+----
+
+
+.Shared pointer
+[source, C++]
+----
+ #include <iostream>
+ #include <memory>
+ struct A {
+ A(int a) { std :: cout << "I'm alive!\n"; }
+ ~A() { std :: cout << "I'm dead... :(\n"; }
+ };
+ int main () {
+ // Equivalent to: std::shared_ptr <A>(new A(10));
+ auto a_ptr = std :: make_shared <A >(10);
+0 std :: cout << a_ptr. use_count () << std :: endl;
+ {
+ auto b_ptr = a_ptr;
+ std :: cout << a_ptr. use_count () << std :: endl;
+ }
+ std :: cout << "Back to main scope\n";
+ std :: cout << a_ptr. use_count () << std :: endl;
+ return 0;
+ }
+----
+
+=== 2.3. Ne zaman kullanılmalı?
+* İşaretçinin belleği yönetmesi gerektiğinde akıllı işaretçiler kullanın
+* Varsayılan olarak *unique_ptr* kullanın
+* Birden fazla nesnenin bir şey üzerinde sahipliği paylaşması gerekiyorsa, bunun için bir *shared_ptr* kullanın
+* Akıllı işaretçiler kullanmak, kendi sınıflarınızda yıkıcıların olmasını önlemenizi sağlar
+* Bir bellek sızıntısı veya sarkan bir işaretçide herhangi bir boşta duran new veya delete düşünün:
+** *delete* kullanmayın
+** **make_unique**, **make_shared **ile bellek ayırın
+* Yukarıdaki işlevleri kullanamıyorsanız,  akıllı işaretçi yapıcısında (constructor)yalnızca *new* kullanın
+
+.Tipik başlangıç hatası
+[source, C++]
+----
+ #include <iostream>
+ #include <memory>
+ int main () {
+ int a = 0;
+ // Same happens with std::shared_ptr.
+ auto a_ptr = std :: unique_ptr <int >(&a);
+ return 0;
+ }
+----
+
+[source, C++]
+----
+ *** Error in `file ': free ():
+ invalid pointer: 0 x00007fff30a9a7bc ***
+----
+* İşaretçiden yığın yönetimli bir değişkene akıllı bir işaretçi oluşturun
+* Değişken hem akıllı işaretçiye hem de yığına aittir ve iki kez silinir → *Hata!*
+
+[source, C++]
+----
+// This is a good example of using smart pointers.
+ #include <iostream>
+ #include <vector>
+ #include <memory>
+ using std :: cout; using std :: unique_ptr ;
+ struct AbstractShape { // Structs to save space.
+ virtual void Print () const = 0;
+ };
+ struct Square : public AbstractShape {
+ void Print () const override { cout << "Square\n"; }
+ };
+ struct Triangle : public AbstractShape {
+ void Print () const override { cout << "Triangle\n"; }
+ };
+ int main () {
+ std :: vector <unique_ptr <AbstractShape >> shapes;
+ shapes. emplace_back (new Square);
+ auto triangle = unique_ptr <Triangle >(new Triangle);
+ shapes. emplace_back (std :: move(triangle));
+ for (const auto& shape : shapes) { shape ->Print (); }
+ return 0;
+ }
+----
+
+== 3. Çağrışımsal kapsayıcılar(Associative containers)
+=== 3.1. std::map
+
+* std::map kullanmak için #include <map> gereklidir
+* Öğeleri benzersiz anahtarlar altında saklar
+* Genellikle Red-Black tree olarak uygulanır
+* Anahtar *<* tanımlı operatörü olan herhangi bir tür olabilir
+* Verilerden oluşturun:
+
+[source, C++]
+----
+ std ::map <KeyT , ValueT > m = {
+ {key , value}, {key , value}, {key , value }};
+----
+
+* map'e öğe ekleyin: m.emplace(key, value);
+* Öğeyi değiştirin veya ekleyin: m[key] = value;
+* Bir öğeye (sabit) ref alın: m.at(key);
+* Anahtarın mevcut olup olmadığını kontrol edin: m.count(key) > 0;
+* Boyutu kontrol et: m.size ();
+
+http://en.cppreference.com/w/cpp/container/map[map]
+
+=== 3.2. std::unordered_map
+
+* std::unordered_map kullanmak için #include <unordered_map>  gereklidir.
+* Std :: map ile aynı amaca hizmet eder
+* Hash tablo olarak uygulandı
+* Anahtar türünün hashing edilebilir olması gerekir
+* Tipik olarak int ile kullanılır, anahtar olarak string
+* Std :: map ile tamamen aynı arayüz
+
+http://en.cppreference.com/w/cpp/container/unordered_map[unordered_map]
+
+.Iterating over maps
+[source, C++]
+----
+ for (const auto& kv : m) {
+ const auto& key = kv.first;
+ const auto& value = kv.second;
+ // Do important work.
+ }
+----
+
+* Saklanan her öğe bir çifttir
+* *map* sıralanmış anahtarlar var
+* *unordered_map* rastgele sırayla anahtarlara sahip
+
+== 4. Type casting
+
+=== 4.1. Casting type of variables
+* Her değişkenin bir türü vardır
+* Türler birinden diğerine dönüştürülebilir
+* Tür dönüştürme, *type casting* olarak adlandırılır
+* 3 tür çevirmenin yolu vardır:
+** static_cast
+** reinterpret_cast
+** dynamic_cast
+
+==== 4.1.1. static_cast
+* Syntax: static_cast<NewType>(variable)
+* Derleme zamanında bir değişkenin türünü dönüştürme
+* Nadiren açık bir şekilde kullanılması gerekir
+* Enum değeri int veya float olarak kullanılabilir
+* Tam teknik özellikler karmaşıktır!
+
+==== 4.1.2. reinterpret_cast
+* Syntax: reinterpret_cast<NewType>(variable)
+* Bir değişkenin baytlarını başka bir tür olarak yeniden yorumlayın
+* Ne yaptığımızı bilmeliyiz!
+* Çoğunlukla ikili veri yazarken kullanılır
+
+==== 4.1.3. dynamic_cast
+* Syntax: dynamic_cast<Base*>(derived_ptr)
+* Dönüşüm çalışma zamanında gerçekleşir
+* *GOOGLE-STYLE* dynamic_cast kullanmaktan kaçının
+
+[NOTE]
+====
+http://en.cppreference.com/w/cpp/language/static_cast[static_cast]
+
+http://en.cppreference.com/w/cpp/language/reinterpret_cast[reinterpret_cast]
+
+http://en.cppreference.com/w/cpp/language/dynamic_cast[dynamic_cast]
+====
+
+== 5. Numaralandırma sınıfları(Enumeration classes)
+* Seçeneklerin bir listesini saklayın
+* Genellikle int türünden türetilir
+* Seçenekler ardışık numaralara atanır
+* Çoğunlukla *switch* yol seçmek için kullanılır
+
+[source, C++]
+----
+enum class EnumType { OPTION_1 , OPTION_2 , OPTION_3 };
+----
+* Değerleri şu şekilde kullanın:
+*EnumType::OPTION_1, EnumType::OPTION_2, …*
+* *GOOGLE-STYLE* Diğer türler olarak ad enum türü->CamelCase
+* *GOOGLE-STYLE* Değerleri sabit olarak adlandırın->**kSomeConstant** yada *ALL_CAPS*
+
+[source, C++]
+----
+ #include <iostream>
+ #include <string>
+ using namespace std;
+ enum class Channel { STDOUT , STDERR };
+ void Print(Channel print_style , const string& msg) {
+ switch ( print_style ) {
+ case Channel :: STDOUT:
+ cout << msg << endl;
+ break;
+ case Channel :: STDERR:
+ cerr << msg << endl;
+ break;
+ default:
+ cerr << "Skipping\n";
+ }
+ }
+ int main () {
+ Print(Channel :: STDOUT , "hello");
+ Print(Channel :: STDERR , "world");
+ return 0;
+ }
+----
+=== 5.1. Explicit values
+
+* Varsayılan olarak enum değerleri 0'dan başlar
+* Gerekirse özel değerler belirleyebiliriz
+* Genellikle varsayılan değerlerle kullanılır
+
+[source, C++]
+----
+ enum class EnumType {
+ OPTION_1 = 10, // Decimal.
+ OPTION_2 = 0x2 , // Hexacedimal.
+ OPTION_3 = 13
+ };
+----
+
+== 6. İkili dosyaları oku/yaz(Read/write binary files)
+* Bir bayt dizisi yazıyoruz
+* Yapıyı iyi belgelemeliyiz, aksi takdirde kimse dosyayı okuyamaz
+* Kayan nokta(floating point) türleri için hassasiyet kaybı yok
+* Ascii dosyalarından önemli ölçüde daha küçük
+
+.Syntax
+[source, C++]
+----
+file.write(reinterpret_cast <char*>(&a), sizeof(a));
+----
+
+=== 6.1. İkili dosyalara yazma(Writing to binary files)
+
+[source, C++]
+----
+ #include <fstream> // for the file streams
+ #include <vector>
+ using namespace std;
+ int main () {
+ string file_name = "image.dat";
+ ofstream file(file_name ,
+ ios_base :: out | ios_base :: binary);
+ if (! file) { return EXIT_FAILURE ; }
+ int r = 2; int c = 3;
+ vector <float > vec(r * c, 42);
+ file.write(reinterpret_cast <char*>(&r), sizeof(r));
+ file.write(reinterpret_cast <char*>(&c), sizeof(c));
+ file.write(reinterpret_cast <char*>(& vec.front ()),
+ vec.size () * sizeof(vec.front ()));
+ return 0;
+ }
+----
+
+=== 6.2. İkili dosyalardan okuma(Reading from binary files)
+* Bir bayt dizisi okuyoruz
+* İkili dosyalar insan tarafından okunamaz
+* İçeriğin yapısını bilmeliyiz
+
+.Syntax
+[source, C++]
+----
+file.read(reinterpret_cast <char*>(&a), sizeof(a));
+----
+
+[source, C++]
+----
+ #include <fstream >
+ #include <iostream >
+ #include <vector >
+ using namespace std;
+ int main () {
+ string file_name = "image.dat";
+ int r = 0, c = 0;
+ ifstream in(file_name ,
+ ios_base ::in | ios_base :: binary);
+ if (!in) { return EXIT_FAILURE ; }
+ in.read(reinterpret_cast <char*>(&r), sizeof(r));
+ in.read(reinterpret_cast <char*>(&c), sizeof(c));
+ cout << "Dim: " << r << " x " << c << endl;
+ vector <float > data(r * c, 0);
+ in.read(reinterpret_cast <char*>(& data.front ()),
+ data.size () * sizeof(data.front ()));
+ for (float d : data) { cout << d << endl; }
+ return 0;
+ }
+----
+
+
+== Referanslar
+
+https://www.ipb.uni-bonn.de/wp-content/uploads/2018/05/lecture_8.pdf
