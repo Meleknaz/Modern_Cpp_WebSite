@@ -188,7 +188,7 @@ Bir fonksiyon programda kullanılmadan önce mutlaka protitipi veya gövdesiyle 
 
 ==== 2.3.2 Fonksiyonların Çağrılması
 
-image::download.png[]
+image::images/download.png[]
 
 * Pass by reference:
 ** void fillCup(Cup &cup);
@@ -203,11 +203,8 @@ image::download.png[]
 ====
 Pass by reference: Programlama dillerinde, fonksiyon çağırma işlemi sırasında kullanılan yöntemlerden birisidir. Farklı kaynaklarda atıf geçirme ( pass by reference ) olarak da geçmektedir. Genelde bir programlama dilinin standart çağrıma yöntemi değer ile çağırmadır (call by value) ancak gösterici (pointer) desteği olan dillerde bu standart çağırma yöntemine ilave olarak atıf ile çağırmak da mümkündür.
 
-<<<<<<< Updated upstream
-Bu yöntemde fonksiyona parametre (argüman) olarak bir değer vermek yerine bir gösterici (pointer) referansı verilir. Dolayısıyla fonksiyonun içindeki bir yerel değişken (local variable), fonksiyonun çağrıldığı yerdeki bir değeri göstermiş olur. Bu sayede fonksiyonda bu gösterici marifetiyle yapılan bütün işlemler fonksiyonun çağrılması sırasında parametre olarak verilen değer üzerine de etkili olur.
-=======
 Bu yöntemde fonksiyona parametre (argüman) olarak bir değer geçirmek yerine bir gösterici (pointer) referansı geçirilir. Dolayısıyla fonksiyonun içindeki bir yerel değişken (local variable), fonksiyonun çağrıldığı yerdeki bir değeri göstermiş olur. Bu sayede fonksiyonda bu gösterici marifetiyle yapılan bütün işlemler fonksiyonun çağrılması sırasında parametre olarak verilen değer üzerine de etkili olur.
->>>>>>> Stashed changes
+
 ====
 
 [source, C++]

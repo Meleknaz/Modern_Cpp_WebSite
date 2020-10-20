@@ -1,0 +1,24 @@
+== GLOBAL DEĞİŞKENLER
+
+Eğer bütün fonksiyonlar içinden erişebileceğiniz değişken tanımlamak istiyorsanız, bu değişkeni bütün fonksiyonların dışına yazmalısınız. Fonksiyonların dışında tanımlanan bu değişkenlere Global Değişkenler diyoruz. Alttaki örnekte, gol_sayisi isminde global değişken tanımlanmıştır.
+
+.Editable.c++
+[source,c++]
+----
+// Degiskenler
+
+#include <iostream>
+
+
+int gol_sayisi;
+/*	Bu değişkene bütün fonksiyonlardan erişilebilir.
+Çünkü herhangi bir fonksiyonun içinde tanımlanmamıştır.
+Dolayısıyla bu değişken Global Değişkendir.*/
+
+int main()
+{
+    // Yukarıda ki gol_sayisi isimli değişkene buradan erişilebilir.
+
+    return 0;
+}
+----

@@ -9,11 +9,11 @@ Linux ortamında modern C++ ile yazılım geliştirme, çekirdek yazılım geli�
 
 === 2.1 Neden C++? Neden Linux?
 
-image::images.png[]
+image::images/images.png[]
 
 Bilgisayar programcılığı ile ilgili kullanıcı odaklı soru cevap sitesi olan Stack Overflow'un 2018 yılında 50.000'den fazla geliştirici ile yapmış olduğu anket sonuçlarına göre geliştiricilerin neredeyse yarısının (%48.3) Linux kullandığını tespit etmiştir. https://insights.stackoverflow.com/survey/2018/[Anketin detayları...]
 
-image::CLion.png[]
+image::images/CLion.png[]
 
 Yazılım geliştirme ve proje yönetimi ile ilgili araçlar geliştiren bir yazılım şirketi olan, JetBrainsin yapmış olduğu anketler sistem dili olarak C++ ın en çok tercih edilen dillerden olduğunu ve C++ alanında uzman kişi sayısının az olduğu tespit edilmişdir.
 (2015 yılında 4.5 milyon kullanıcı)
@@ -24,7 +24,7 @@ https://blog.jetbrains.com/clion/2015/07/infographics-cpp-facts-before-clion/[An
 Linux; bilgisayar işletim sistemlerinin en temel parçası olan çekirdek yazılımlarından bir tanesidir. GNU Genel Kamu Lisansı ile sunulan ve Linux Vakfı çatısı altında geliştirilen bir özgür yazılım projesidir. Linux ismi ilk geliştiricisi olan Linus Torvalds tarafından 1991 yılında verilmiştir.GNU/Linux, açık kaynak kodlu bir işletim sistemi çekirdeğidir.
 
 .Linux dizin ağacı görünümü
-image::linux.png[]
+image::images/linux.png[]
 
 Terminali açmak için Ctrl + Alt + T tuşuna basın.Linux terminali çok güçlü bir araçtır, coğu görev terminalde GUI'den daha hızlı yapılabilir.Terminal her zaman bir klasördedir.
 
@@ -52,7 +52,7 @@ Mevcut paketler hakkındaki bilgileri güncellemek için: *sudo apt update*
 
 Herhangi bir kütüphane içinde aynı işlemler geçerlidir, sadece *lib* ön eki alırlar.
 
-image::image.png[]
+image::images/image.png[]
 
 == 2.3 C++ Kod Nereye Yazılır
 

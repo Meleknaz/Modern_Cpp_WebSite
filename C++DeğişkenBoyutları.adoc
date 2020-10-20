@@ -1,0 +1,20 @@
+== DEĞİŞKEN BOYUTLARI
+
+. C++ - Veri Tiplerinin Bellekte Kapladığı Alanı Bulan Program
+[width="100%",options="header,footer"]
+|====================
+|**İsim**  |**Tanım**  | *Boyut* | *Değer Aralığı* 
+|char  |Karakter | 1 byte |  İşaretli: -128 ile 127 arasında
+
+İşaretsiz: 0 ile 255 arasında
+|short |Kısa Tamsayı  | 2 byte |  İşaretli: -32768 ile 32767 arasında
+
+işaretsiz: 0 ile 65535 arasında
+|int  |Tamsayı  |4 byte  |  Short ve Long Değerlerini Kapsar
+|long |Uzun Tamsayı|4 byte  | İşaretli: -2147483648 ile 2177483647 arasında
+
+işaretsiz 0 ile 4294967295 arasında 
+|double |Uzun Ondalıklı Sayı | 8 byte |  1.7e +/- 308 (15 basamak)
+|float |Ondalıklı Sayı |  4 byte|  	3.4e +/- 38 (7 basamak) 
+|bool |True ya da False| 2 byte |  Doğru ya da Yanlış durumlarını temsil eder.
+|====================

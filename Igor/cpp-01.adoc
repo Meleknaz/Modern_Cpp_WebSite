@@ -219,7 +219,7 @@ Emplace_back kullanılırsa, bunun yerine nesne doğrudan vektörde oluşturulur
 
 Aşağıdaki resimsel gösterim daha iyi anlamanıza yardımcı olabilir.  
 
-image::difference-between-push_back-and-emplace_back.jpg[]
+image::images/difference-between-push_back-and-emplace_back.jpg[]
 
 [source , cpp]
 ----
@@ -251,7 +251,7 @@ image::difference-between-push_back-and-emplace_back.jpg[]
 
 ----
 
-image::Vector-vs-Array.jpg[]
+image::images/Vector-vs-Array.jpg[]
 
 === 2.7. Değişkenlerin kapsam alanı
 

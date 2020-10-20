@@ -101,7 +101,7 @@ Sudo apt libgtest-dev yükle
 ----
 
 == 3. Namespaces
-image::namespace.png[]
+image::images/namespace.png[]
 
 * İsim çatışmalarını önlemeye yardımcı olur
 * Projeyi mantıksal modüller halinde gruplayın

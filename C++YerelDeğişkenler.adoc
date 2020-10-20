@@ -1,0 +1,31 @@
+=== Değişken Türleri
+
+⇒ Yerel Değişkenler
+
+⇒ Global Değişkenler
+
+⇒ Static Değişkenler
+
+====== 1- Yerel Değişkenler
+
+Bir değişkenin tanımlandığı yerin önemi büyüktür. Değişken tanımlamasını fonksiyonun içinde tanımlarsanız o değişkene sadece o fonksiyonun içerisinden erişebilirsiniz. İşte fonksiyonun içerisinde tanımlanan bu değişkenlere yerel değişkenler diyoruz. Alttaki örnekte, gol_sayisi isminde main fonksiyonuna ait yerel değişken tanımlanmıştır:
+
+.Editable.c++
+[source,c++]
+----
+// Degiskenler
+
+#include <iostream>
+
+
+int main()
+{
+
+	int gol_sayisi;
+	/*	Bu değişken main fonksiyonunun yerel değişkenidir.
+	Dolayısıyla bu değişkene sadece main fonksiyonun
+	içinden erişebilirsiniz.*/
+
+    return 0;
+}
+----

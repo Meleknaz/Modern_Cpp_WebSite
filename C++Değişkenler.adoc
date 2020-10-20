@@ -1,0 +1,262 @@
+== DEĞİŞKENLER
+
+Daha önce yazdığımız "merhaba dünya" programı hariç hemen hemen tüm programlarda değişkenlerle çalışmak zorundayız. Programlarımızda işlemlerimizi yaparken verileri kullanırız. Mesela herhangi iki sayıyı toplarız veya iki tane karakter dizisini (string) karşılaştırırız. Bu işlemler için kullandığımız verilerimizi değişkenler içinde tutarız.
+
+ RAM'de (Random Access Memory) verilerin saklandığı alanlara değişken denir. Bir değişken tanımlandığında bu değişken için RAM'de yer ayrılır.
+ 
+====== Değişken Tanımlama Kuralları
+
+
+1. İngiliz alfabesinde bulunan karakterler (A-Z, a-z), 0-9 arasındaki rakamlar kullanılabilir.
+2. Türkçe karakterler (ç, ğ, ı, ö, ş, ü, Ç, Ğ, İ, Ö, Ş, Ü), boşluk karakteri ve özel karakterler kullanılamaz. (Alt çizgi "_" karakteri kullanılabilir.) 
+
+3. C++ diline özgü anahtar kelimeler değişken olarak kullanılamaz. (bool, case, for vb.)
+
+====== Örnekler ======
+
+* double ışıkhızı; Yanlış (Türkçe karakter kullanılamaz!)
+
+* double isik hizi; Yanlış (Boşluk karakteri kullanılamaz!)
+
+* double isikhizi; Doğru 
+
+* double isik_hizi; Doğru 
+
+* float kilogram; Doğru
+
+* int 2sayi; Yanlış (Rakam ile başlanılamaz!) 
+
+* int sayi2=4; Doğru 
+
+* int _candela; Doğru 
+
+* long for; Yanlış (Anahtar kelime kullanılamaz!) 
+
+* char harf='a'; Doğru
+
+IMPORTANT: C++ küçük ve büyük harf ayrımı yapar. Bu nedenle double pi; ve double PI; farklı değişkenleri ifade eder.
+
+
+. C++ - Veri Tiplerinin Bellekte Kapladığı Alanı Bulan Program
+[width="100%",options="header,footer"]
+|====================
+|**İsim**  |**Tanım**  | *Boyut* | *Değer Aralığı* 
+|char  |Karakter | 1 byte |  İşaretli: -128 ile 127 arasında
+
+İşaretsiz: 0 ile 255 arasında
+|short |Kısa Tamsayı  | 2 byte |  İşaretli: -32768 ile 32767 arasında
+
+işaretsiz: 0 ile 65535 arasında
+|int  |Tamsayı  |4 byte  |  Short ve Long Değerlerini Kapsar
+|long |Uzun Tamsayı|4 byte  | İşaretli: -2147483648 ile 2177483647 arasında
+
+işaretsiz 0 ile 4294967295 arasında 
+|double |Uzun Ondalıklı Sayı | 8 byte |  1.7e +/- 308 (15 basamak)
+|float |Ondalıklı Sayı |  4 byte|  	3.4e +/- 38 (7 basamak) 
+|bool |True ya da False| 2 byte |  Doğru ya da Yanlış durumlarını temsil eder.
+|====================
+
+=== Değişken Türleri
+
+⇒ Yerel Değişkenler
+
+⇒ Global Değişkenler
+
+⇒ Static Değişkenler
+
+====== 1- Yerel Değişkenler
+
+Bir değişkenin tanımlandığı yerin önemi büyüktür. Değişken tanımlamasını fonksiyonun içinde tanımlarsanız o değişkene sadece o fonksiyonun içerisinden erişebilirsiniz. İşte fonksiyonun içerisinde tanımlanan bu değişkenlere yerel değişkenler diyoruz. Alttaki örnekte, gol_sayisi isminde main fonksiyonuna ait yerel değişken tanımlanmıştır:
+
+.Editable.c++
+[source,c++]
+----
+// Degiskenler
+
+#include <iostream>
+
+
+int main()
+{
+
+	int gol_sayisi;
+	/*	Bu değişken main fonksiyonunun yerel değişkenidir.
+	Dolayısıyla bu değişkene sadece main fonksiyonun
+	içinden erişebilirsiniz.*/
+
+    return 0;
+}
+----
+
+====== 2- Global Değişkenler
+
+Eğer bütün fonksiyonlar içinden erişebileceğiniz değişken tanımlamak istiyorsanız, bu değişkeni bütün fonksiyonların dışına yazmalısınız. Fonksiyonların dışında tanımlanan bu değişkenlere Global Değişkenler diyoruz. Alttaki örnekte, gol_sayisi isminde global değişken tanımlanmıştır.
+
+.Editable.c++
+[source,c++]
+----
+// Degiskenler
+
+#include <iostream>
+
+
+int gol_sayisi;
+/*	Bu değişkene bütün fonksiyonlardan erişilebilir.
+Çünkü herhangi bir fonksiyonun içinde tanımlanmamıştır.
+Dolayısıyla bu değişken Global Değişkendir.*/
+
+int main()
+{
+    // Yukarıda ki gol_sayisi isimli değişkene buradan erişilebilir.
+
+    return 0;
+}
+----
+
+====== 3- Static Değişkenler
+
+Diyelim fonksiyon içinde değişken tanımladınız. Yani yerel değişken tanımladınız. Bu değişken fonksiyon her çağrıldığında hafızada yer tutar, fonksiyon bittiğinde ise hafızadan yok edilir. Global değişkenler ise program açıldığında hafızada yer tutar ve program kapanana kadar yok edilmezler.
+
+Kısacası yerel değişkenlerde fonksiyon yeniden çağrıldığında değişkenin değeri son değer ile aynı olmaz. Eğer biz tanımladığımız yerel değişkenin değerinin fonksiyonun tekrar çağrıldığında değerinin yok edilmeden var olan değerde kalmasını istersek Static Değişkenleri kullanırız. Static değişkenin nasıl tanımlandığını aşağıdaki örnekten görebilirsiniz:
+
+.Editable.c++
+[source,c++]
+----
+// Degiskenler
+
+#include "stdafx.h"
+#include <iostream>
+
+using namespace std;
+
+void gol_at() {
+
+	static int gol = 0;
+
+	gol++; // gol sayısını 1 tane arttırıyoruz.
+
+	cout << "Gol sayisi: " << gol << endl; // gol sayının değerini ekrana yazdırıyoruz ve alt satıra geçiyoruz.
+}
+
+int main()
+{
+	
+	gol_at(); // gol_at ismindeki fonksiyonu çağırıyoruz. Yani işletiyoruz.
+
+	gol_at();
+
+	gol_at();
+
+	gol_at();
+
+	system("pause"); // ekranın açık kalmasını sağlıyoruz.
+
+    return 0;
+}
+----
+
+Yukarıdaki örnekte gol_at isminde fonksiyon oluşturduk. Bu fonksiyon: gol isminde ilk değeri sıfır olan tamsayı türünde static bir değişken oluşturuyor. Daha sonra bu değişkenin değerini ++ operatörü ile 1 tane arttırıp gol değişkeninin değerini ekrana yazdırıyor.Main fonksiyonunda ise gol_at(); kodu ile fonksiyonu çağırdık ve bu işlemi 4 kere tekrar ettirdik. Yani fonksiyon içindeki kodları 4 kere işlettik.
+
+Programın çıktısı bu şekildedir:
+
+   Gol sayisi:1
+   Gol sayisi:2
+   Gol sayisi:3
+   Gol sayisi:4
+
+
+Eğer biz gol ismindeki değişkeni static olarak tanımlamasaydık ekrana yazdırılan değer her seferinde 1(bir) olacaktı çünkü değişkene ilk değer olarak 0(sıfır) değerini verdik ve ekrana yazdırmadan önce değeri 1(bir) tane arttırdık. Dolayısıyla Static değişken sayesinde değişken; fonksiyon her çağrıldığında yeniden oluşturulmak yerine sadece ilk seferde oluşturulup, sonrasında global değişkenler gibi değeri korunabiliyor. Bu örnekle birlikte static kavramının nasıl kullanıldığını ve mantığını anladık.
+
+
+====== Sabitler(Constansts)
+
+Sabitler: program içerisinde değerinin değiştirilemediği değişken türleridir. Örneğin, pi değişkenin değerini tutan değişkenimizi sabit olarak tanımlarız ve bu değeri istesek dahi değiştiremeyiz. Sabit değişken bildirimlerinde Const ifadesini kullanırız.
+
+Sabit değişken bildirimi:
+
+*(Değişken Tipi) Const (Değişken İsmi) = (değeri);*
+
+veya;
+
+*Const (Değişken Tipi) (Değişken İsmi) = (değeri);*
+
+şeklindedir.
+
+Aşağıda dairenin alanını hesaplayan örnek kod parçası mevcut. Burada pi sayısı sabit olarak tanımlanmıştır:
+
+
+.Editable.c++
+[source,c++]
+----
+// Degiskenler
+
+#include "stdafx.h"
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	double const pi = 3.14; // pi sayısını 3.14 sabit değişken olarak double tipinde tanımladık
+
+	int r = 12; // yarıçap
+
+	double alan = pi*r*r; // dairenin alanını 'alan' ismindeki double tipindeki değişkene atadık.
+
+	cout << "Dairenin alani: " << pi*r*r << endl; // 'alan' ismindeki hesaplanan alanı tutan değişkeni ekrana yazdırdık.
+
+	system("pause"); // ekranın açık kalmasını sağlıyoruz.
+
+    return 0;
+}
+----
+
+Yukarıdaki örnekte pi sayısnı sabit olarak tanımladık ve dairenin yarıçapını belirledik. Daha sonra bu belirlediğimiz değerler eşliğinde dairenin alanı hesaplanıp ekrana yazdırdık. Programın çıktısı şu şekildedir:
+
+   Dairenin alani:452.16
+
+
+==== Auto Deyimi
+
+Auto deyimi eğer değişken tanımlanırken değer alıyorsa kullanılır. Örneğin bir double değişkene 5.5 değerini vereceksek derleyici tanımlayacağımız değişkenin zaten double olduğunu çözebilir. Örneğin:
+
+.Editable.c++
+[source,c++]
+----
+double x{ 5.6 };  //Derleyici 5.6'nin double literal oldugunu biliyor.
+
+auto x { 5.6 }; //Yukaridakiyle ayni is yapilir. Derleyici x'in double oldugunu biliyor.
+----
+
+auto kullanıldığı zaman, derleyiciye, tanımlanan değişkenin atanacak değerin türü olacağı bildirilir. Bu işlem fonksiyon parametreleri için kullanılmaz. Örneğin:
+
+.Editable.c++
+[source,c++]
+----
+int max(auto x, auto y)
+
+{
+
+    return (x > y ) ? x : y;
+
+}
+----
+
+Bu çalışmayacaktır çünkü derleyici parametrelerin türünü derleme zamanı çözemeyecektir.
+
+C++14 ile birlikte auto deyimi fonksiyon dönüş tipi olarak kullanılabilir hale geldi.
+
+
+.Editable.c++
+[source,c++]
+----
+auto topla(int x, int y)
+
+{
+
+   return x + y;
+
+}
+----
+
+

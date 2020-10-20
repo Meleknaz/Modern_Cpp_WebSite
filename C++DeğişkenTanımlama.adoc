@@ -1,0 +1,37 @@
+== DEĞİŞKENLER
+
+Daha önce yazdığımız "merhaba dünya" programı hariç hemen hemen tüm programlarda değişkenlerle çalışmak zorundayız. Programlarımızda işlemlerimizi yaparken verileri kullanırız. Mesela herhangi iki sayıyı toplarız veya iki tane karakter dizisini (string) karşılaştırırız. Bu işlemler için kullandığımız verilerimizi değişkenler içinde tutarız.
+
+ RAM'de (Random Access Memory) verilerin saklandığı alanlara değişken denir. Bir değişken tanımlandığında bu değişken için RAM'de yer ayrılır.
+ 
+====== Değişken Tanımlama Kuralları
+
+
+1. İngiliz alfabesinde bulunan karakterler (A-Z, a-z), 0-9 arasındaki rakamlar kullanılabilir.
+2. Türkçe karakterler (ç, ğ, ı, ö, ş, ü, Ç, Ğ, İ, Ö, Ş, Ü), boşluk karakteri ve özel karakterler kullanılamaz. (Alt çizgi "_" karakteri kullanılabilir.) 
+
+3. C++ diline özgü anahtar kelimeler değişken olarak kullanılamaz. (bool, case, for vb.)
+
+====== Örnekler ======
+
+* double ışıkhızı; Yanlış (Türkçe karakter kullanılamaz!)
+
+* double isik hizi; Yanlış (Boşluk karakteri kullanılamaz!)
+
+* double isikhizi; Doğru 
+
+* double isik_hizi; Doğru 
+
+* float kilogram; Doğru
+
+* int 2sayi; Yanlış (Rakam ile başlanılamaz!) 
+
+* int sayi2=4; Doğru 
+
+* int _candela; Doğru 
+
+* long for; Yanlış (Anahtar kelime kullanılamaz!) 
+
+* char harf='a'; Doğru
+
+IMPORTANT: C++ küçük ve büyük harf ayrımı yapar. Bu nedenle double pi; ve double PI; farklı değişkenleri ifade eder.

@@ -1,0 +1,52 @@
+== Static Değişkenler
+
+Diyelim fonksiyon içinde değişken tanımladınız. Yani yerel değişken tanımladınız. Bu değişken fonksiyon her çağrıldığında hafızada yer tutar, fonksiyon bittiğinde ise hafızadan yok edilir. Global değişkenler ise program açıldığında hafızada yer tutar ve program kapanana kadar yok edilmezler.
+
+Kısacası yerel değişkenlerde fonksiyon yeniden çağrıldığında değişkenin değeri son değer ile aynı olmaz. Eğer biz tanımladığımız yerel değişkenin değerinin fonksiyonun tekrar çağrıldığında değerinin yok edilmeden var olan değerde kalmasını istersek Static Değişkenleri kullanırız. Static değişkenin nasıl tanımlandığını aşağıdaki örnekten görebilirsiniz:
+
+.Editable.c++
+[source,c++]
+----
+// Degiskenler
+
+#include <iostream>
+
+using namespace std;
+
+void gol_at() {
+
+	static int gol = 0;
+
+	gol++; // gol sayısını 1 tane arttırıyoruz.
+
+	cout << "Gol sayisi: " << gol << endl; // gol sayının değerini ekrana yazdırıyoruz ve alt satıra geçiyoruz.
+}
+
+int main()
+{
+	
+	gol_at(); // gol_at ismindeki fonksiyonu çağırıyoruz. Yani işletiyoruz.
+
+	gol_at();
+
+	gol_at();
+
+	gol_at();
+
+	system("pause"); // ekranın açık kalmasını sağlıyoruz.
+
+    return 0;
+}
+----
+
+Yukarıdaki örnekte gol_at isminde fonksiyon oluşturduk. Bu fonksiyon: gol isminde ilk değeri sıfır olan tamsayı türünde static bir değişken oluşturuyor. Daha sonra bu değişkenin değerini ++ operatörü ile 1 tane arttırıp gol değişkeninin değerini ekrana yazdırıyor.Main fonksiyonunda ise gol_at(); kodu ile fonksiyonu çağırdık ve bu işlemi 4 kere tekrar ettirdik. Yani fonksiyon içindeki kodları 4 kere işlettik.
+
+Programın çıktısı bu şekildedir:
+
+  Gol sayisi:1
+  Gol sayisi:2
+  Gol sayisi:3
+  Gol sayisi:4
+  
+Eğer biz gol ismindeki değişkeni static olarak tanımlamasaydık ekrana yazdırılan değer her seferinde 1(bir) olacaktı çünkü değişkene ilk değer olarak 0(sıfır) değerini verdik ve ekrana yazdırmadan önce değeri 1(bir) tane arttırdık. Dolayısıyla Static değişken sayesinde değişken; fonksiyon her çağrıldığında yeniden oluşturulmak yerine sadece ilk seferde oluşturulup, sonrasında global değişkenler gibi değeri korunabiliyor. Bu örnekle birlikte static kavramının nasıl kullanıldığını ve mantığını anladık.
+

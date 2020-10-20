@@ -1,0 +1,46 @@
+== CONSTANSTS
+
+Sabitler: program içerisinde değerinin değiştirilemediği değişken türleridir. Örneğin, pi değişkenin değerini tutan değişkenimizi sabit olarak tanımlarız ve bu değeri istesek dahi değiştiremeyiz. Sabit değişken bildirimlerinde Const ifadesini kullanırız.
+
+Sabit değişken bildirimi:
+
+*(Değişken Tipi) Const (Değişken İsmi) = (değeri);*
+
+veya;
+
+*Const (Değişken Tipi) (Değişken İsmi) = (değeri);*
+
+şeklindedir.
+
+Aşağıda dairenin alanını hesaplayan örnek kod parçası mevcut. Burada pi sayısı sabit olarak tanımlanmıştır:
+
+
+.Editable.c++
+[source,c++]
+----
+// Degiskenler
+
+#include "stdafx.h"
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	double const pi = 3.14; // pi sayısını 3.14 sabit değişken olarak double tipinde tanımladık
+
+	int r = 12; // yarıçap
+
+	double alan = pi*r*r; // dairenin alanını 'alan' ismindeki double tipindeki değişkene atadık.
+
+	cout << "Dairenin alani: " << pi*r*r << endl; // 'alan' ismindeki hesaplanan alanı tutan değişkeni ekrana yazdırdık.
+
+	system("pause"); // ekranın açık kalmasını sağlıyoruz.
+
+    return 0;
+}
+----
+
+Yukarıdaki örnekte pi sayısnı sabit olarak tanımladık ve dairenin yarıçapını belirledik. Daha sonra bu belirlediğimiz değerler eşliğinde dairenin alanı hesaplanıp ekrana yazdırdık. Programın çıktısı şu şekildedir:
+
+    Dairenin alani:452.16

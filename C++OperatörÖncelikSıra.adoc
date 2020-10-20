@@ -1,0 +1,45 @@
+== Operatör Öncelik Sırası 
+
+:veya: ||
+
+İşlemlerde öncelik ve birleşme özellikleri son derece önemlidir. Geliştiricinin hesaplamak istediği ifadeyi doğru olarak tanımlaması bu kavramları iyi anlamış olmasına bağlıdır. Operatörlerin bazılarının diğerlerinden öncelikli olması demek, öncelikli operatörlere ait operandların gruplanarak diğerlerinden evvel işleme sokulması anlamına gelir.
+
+Örneğin; 13 + 4 * 12 ifadesinde çarpma operatörü toplamaya göre öncelikli olduğu için önce 4 ve 12 operandları gruplanarak 4 * 12 işlemi yapılır, sonra 13 + 48 işlemi gerçekleştirilir. (13 + ( 4 * 12 )) Bu nedenle örnek ifadenin sonucu 204 değil, 61'dir. Öncelik sırası aynı olan operatörler arasında ise birleşme özelliği önem kazanır. Birleşme’nin soldan sağa olduğu operatörlerde, derleyici işlem sırasını en soldaki operatörden başlatarak sağa doğru ilerletir. Diğer grupta ise, tam tersi sırada işlemler yerine getirilir. 
+
+Aşağıdaki tabloda operatörler ve öncelik sıraları gösterilmiştir. Daha yukarı satırlarda bulunan operatörler daha önceliklidir. Aynı satırdaki operatörlerin ise öncelik sıraları aynıdır.
+Öncelik sırası aynı olan operatörler bir ifade içinde bulunduğu zaman bu operatörler, tablonun ikinci sütununda gösterildiği gibi soldan sağa doğru ya da sağdan sola doğru işlem görürler. Örneği aşağıdaki örnek satırda önce çarpma işlemi, daha sonra bölme işlemi gerçekleştirilecektir çünkü çarpma ve bölme işlemleri aynı önceliğe sahip olmalarına rağmen aynı satır içinde daha solda olan ilk işlem görür:
+
+.Editable.c++
+[source,c++]
+----
+int a;
+a=8*4/2; // önce çarpma sonra bölme
+----
+
+
+.operatörlerin öncelik sırasını gösteren tablo
+[width="100%",options="header,footer"]
+|====================
+|**Operatörler**  |  *Aynı satırda iseler öncelik:*
+|( ) [ ] -> . : : |  Soldan sağa doğru
+| ! ~ -- ++ * &|  Soldan sağa doğru
+| * / % |  Soldan sağa doğru
+| + - |  Soldan sağa doğru
+| < <= => > |  Soldan sağa doğru
+| == != |  Soldan sağa doğru
+| && |  
+|{veya}|  
+| ?: |  
+|  = *= /= %= += -=|  Soldan sağa doğru
+|====================
+
+
+
+
+
+
+
+
+
+
+
