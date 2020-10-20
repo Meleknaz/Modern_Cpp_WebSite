@@ -5,6 +5,7 @@
 
 Bu seride 
 
+<<<<<<< HEAD
 * Genel Programlama(Generic programming)
 ** Template functions
 ** Template classes
@@ -403,6 +404,27 @@ throw logic_error (msg);
 Generic programming:
 https://www.geeksforgeeks.org/generics-in-c/
 
+=======
+* Generic programming
+* Template functions
+* Template classes
+* Iterators
+* Error handling
+* Program input parameters
+* OpenCV
+** cv::Mat
+** cv::Mat I/O
+* SIFT Extraction
+* FLANN in OpenCV
+* OpenCV with CMake 
+
+örneklerle anlatılmaktadır.
+
+== 2. GİRİŞ
+
+== Referanslar
+
+>>>>>>> fe3be6150d3b2a03dafcbde687e479d82fb25042
 Macros:
 http://en.cppreference.com/w/cpp/preprocessor/replace
 

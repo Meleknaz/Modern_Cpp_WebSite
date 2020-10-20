@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 = Bilgisayarlı Görü ve Görüntü İşleme için Modern C ++
 :TOC:
 
@@ -379,3 +380,386 @@ ____
 
 * Fluent C++: structs vs classes:
 https://goo.gl/NFo8HP [shortened]
+=======
+= Bilgisayarlı Görü ve Görüntü İşleme için Modern C ++
+:TOC:
+
+== 1. ÖZET
+
+Bu seride 
+
+* Classes(Sınıfları)
+** Polymorphism(Polimorfizm)
+* I/O(G/Ç)
+* Stringstreams(Dizgi Akımları)
+* CMake find_package
+
+örneklerle anlatılmaktadır.
+
+
+== 2. Polymorphism
+
+[quote,Wiki]
+____
+Yunanca polys, "çok, çok" ve morphē, "biçim, şekil"(From Greek polys, "many, much" and morphē, "form, shape")
+____
+
+* C++ programlama dili, nesne yönelimli olmasından dolayı çok şekillilik (polymorphism) özelliğini destekler. Çok şekillilik (polymorphism) bir işin farklı şekillerle yapılabilmesidir. Örneğin bir metodun farklı şekillerde çağrılabilmesi, çok şekillik özelliği ile mümkündür. 
+
+* Türetilmiş sınıfların temel sınıf türlerine dönüştürülmesine izin verir:
+*const Base& base = Derived(…)*
+
+=== 2.1. Ne zaman faydalıdır?
+* Uygulamanın yalnızca ortak bir arayüze uymasını isteyen bir sınıf içinde kapsüllenmesine izin verir
+* Genellikle şunlar için kullanılır:
+** Bazı Base sınıfının tüm çocukları ile birleştirilmiş bir şekilde çalışmak
+** Birden çok sınıfta bir arabirimi bazı işlevleri uygulamaya zorlamak için 
+** Bazı karmaşık işlevlerin ayrı sınıflara taşındığı ve modüler bir şekilde nesneye aktarıldığı strateji modelinde
+
+=== 2.2. Bir sınıf hiyerarşisi oluşturma
+* Bazen sınıflar bir hiyerarşi oluşturmalıdır
+* Sınıfların tek bir hiyerarşide olması gerekip gerekmediğini test etmek için *is a* ve *has a* arasında ayrım yapın:
+** Kare bir Şekildir: Şekilden miras alabilir
+*** Square *is a* Shape: can inherit from Shape
+** Öğrenci İnsandır: İnsandan miras alabilir
+*** Student *is a* Human: can inherit from Human
+** Arabanın Tekerleği vardır: birbirini miras almamalıdır
+*** Car *has a* Wheel: should *not* inherit each other
+* https://google.github.io/styleguide/cppguide.html#Inheritance[GOOGLE-STYLE]
+
+[source,c++]
+----
+ #include <iostream>
+ using std :: cout; using std :: endl;
+ class Rect {
+ public:
+ Rect(int w, int h) : w_{w}, h_{h} {}
+ virtual void Print () const {
+ cout << "Rect: " << w_ << " x " << h_ << endl;
+ }
+ protected:
+ int w_ = 0; int h_ = 0;
+ };
+ struct Square : public Rect { // Should be a class.
+ explicit Square(int size) : Rect{size , size} {}
+ void Print () const override {
+ cout << "Square: " << w_ << " x " << h_ << endl;
+ }
+ };
+ void Print(const Rect& rect) { rect.Print (); }
+ int main () {
+ Print(Square (10)); Print(Rect (10, 20));
+ return 0;
+ }
+----
+
+=== 2.3. Arayüzleri kullanma(Using interfaces)
+* Bazı işlevleri uygulamak için diğer sınıfları zorlamanız gerektiğinde arabirimleri kullanın
+* Soyut işlevsellik(abstract functionality) açısından sınıflar hakkında düşünmeye izin verin
+* Uygulamayı arayandan gizleyin 
+* Sadece yeni bir sınıf ekleyerek işlevselliği kolayca genişletmeye izin verin
+
+[source,c++]
+----
+#include <iostream>
+ using std :: cout;
+ using std :: endl;
+ struct Printable { // Saving space. Should be a class.
+ virtual void Print () const = 0;
+ };
+ struct A : public Printable {
+ void Print () const override { cout << "A" << endl; }
+ };
+ struct B : public Printable {
+ void Print () const override { cout << "B" << endl; }
+ };
+ void Print(const Printable & var) { var.Print (); }
+ int main () {
+ Print(A());
+ Print(B());
+ return 0;
+ }
+----
+
+=== 2.4. Strateji modelini kullanma
+* Bir sınıf karmaşık harici işlevselliğe dayanıyorsa, strateji modelini kullanın
+* Uygulamasını değiştirmeden sınıfın işlevselliğini eklemeye/değiştirmeye izin verir
+* Tüm stratejiler tek bir strateji arayüzüne uymalıdır
+
+[source,c++]
+----
+ #include <iostream>
+ using std :: cout; using std :: endl;
+ struct Strategy { // Saving space , should be classes.
+ virtual void Print () const = 0;
+ };
+ struct StrategyA : public Strategy {
+ void Print () const override { cout << "A" << endl; }
+ };
+ struct StrategyB : public Strategy {
+ void Print () const override { cout << "B" << endl; }
+ };
+ struct MyStruct {
+ MyStruct(const Strategy& s): strategy_ (s) {}
+ void Print () const { strategy_ .Print (); }
+ const Strategy& strategy_ ;
+ };
+ int main () {
+ // Create a local var of MyStruct and call its Print
+ MyStruct( StrategyA ()).Print ();
+ MyStruct( StrategyB ()).Print ();
+ }
+----
+[CAUTION]
+====
+*Aşırı kullanmayın*
+
+* Bu kalıpları yalnızca ihtiyacınız olduğunda kullanın
+* Sınıfınızın bazı işlevler için tek bir yöntemi olması gerekiyorsa ve hiçbir zaman başka bir uygulamaya ihtiyaç duymayacaksa, onu sanal yapmayın
+* Çoğunlukla kod kopyalamaktan kaçınmak ve bazı işlevleri dışarı taşıyarak sınıfları küçültmek için kullanılır
+====
+
+== 3. Dosyaları okuma ve yazma
+* STL'den akışları kullanın
+* cerr, cout'a benzer sözdizimi vardır
+
+[source,c++]
+----
+ #include <fstream>
+ using std :: string;
+ using Mode = std :: ios_base :: openmode;
+ // ifstream: stream for input from file
+ std :: ifstream f_in(string& file_name , Mode mode);
+ // ofstream: stream for output to file
+ std :: ofstream f_out(string& file_name , Mode mode);
+ // stream for input and output to file
+ std :: fstream f_in_out(string& file_name , Mode mode);
+----
+
+=== 3.1. Bir dosyanın açılabileceği birçok mod vardır
+
+
+[width="100%"]
+|====================
+| MOD | ANLAMI  
+| ios_base::app | Çıktı ekle 
+| ios_base::ate |  Açıldığında EOF'yi arayın
+| ios_base::binary |  Dosyayı ikili modda aç
+| ios_base::in  |  Dosyayı okumak için aç
+| ios_base::out  |  Dosyayı yazmak için aç
+| ios_base::trunc |  Mevcut dosyanın üzerine yaz
+|====================
+
+=== 3.2. Düzenli sütunlar
+* Şu durumlarda kullanın:
+** Dosya, organize edilmiş verileri içerir
+** Her satırın sütunu bulunmalıdır
+
+----
+ 1 2.34 One 0.21
+ 2 2.004 two 0.23
+ 3 -2.34 string 0.22
+----
+ 
+.Başarılı
+----
+ 2.34 One word 0.21
+ 2 2.004 two 0.23
+ 3 -2.34 string 0.22
+----
+
+.Başarısız
+----
+ 1 2.34 One 0.21
+ 2 2.004 two
+ 3 -2.34 string 0.22
+----
+
+=== 3.3. İfstream'den okuma
+
+[source,c++]
+----
+ #include <fstream> // For the file streams.
+ #include <iostream>
+ #include <string>
+ using namespace std; // Saving space.
+ int main () {
+ int i;
+ double a, b;
+ string s;
+ // Create an input file stream.
+ ifstream in("test_cols.txt", ios_base ::in);
+ // Read data , until it is there.
+ while (in >> i >> a >> s >> b) {
+ cerr << i << ", " << a << ", "
+ << s << ", " << b << endl;
+ }
+ return (0);
+ }
+----
+
+
+===  3.4. Dosyaları her seferinde bir satır okuma
+* Her satırı bir dizeye bağlayın
+* Daha sonra dizeyi ayrıştırın
+
+[source,c++]
+----
+1 ===============================
+2 HEADER
+3 a = 4.5
+4 filename = /home/igor /. bashrc
+5 ===============================
+6 2.34
+7 1 2.23
+8 ER SIE ES
+----
+
+[source,c++]
+----
+ #include <fstream> // For the file streams.
+ #include <iostream>
+ using namespace std;
+ int main () {
+ string line , file_name ;
+ ifstream input("test_bel.txt", ios_base ::in);
+ // Read data line -wise.
+ while (getline(input , line)) {
+ cout << "Read: " << line << endl;
+ // String has a find method.
+ string :: size_type loc = line.find("filename", 0);
+ if (loc != string :: npos) {
+ file_name = line.substr(line.find("=", 0) + 1,
+ string :: npos);
+ }
+ }
+ cout << "Filename found: " << file_name << endl;
+ return (0);
+ }
+----
+
+=== 3.5. Metin dosyalarına yazma
+* cerr ve cout akışlarıyla aynı sözdiziminde, ofstream ile doğrudan dosyalara yazabiliriz
+
+[source,c++]
+----
+ #include <iomanip> // For setprecision.
+ #include <fstream>
+ using namespace std;
+ int main () {
+ string filename = "out.txt";
+ ofstream outfile( filename );
+ if (! outfile.is_open ()) { return EXIT_FAILURE ; }
+ double a = 1.123123123;
+ outfile << "Just string" << endl;
+ outfile << setprecision (20) << a << endl;
+ return 0;
+ }
+----
+
+== 4. String streams(Dize akışları)
+* Zaten bilinen akışlar:
+** Standard output(Standart çıktı): *cerr, cout*
+** Standard input(Standart girdi): *cin*
+** Filestreams(Dosya akışları):** fstream, ifstream, ofstream**
+* Yeni akış türü: *stringstream*
+** int, double, string, vs.'yi tek bir string de birleştirin 
+** string leri int, double, string vb. olarak ayırın.
+
+[source,c++]
+----
+ #include <iomanip>
+ #include <iostream>
+ #include <sstream>
+ using namespace std;
+ int main () {
+ stringstream s_out;
+ string ext = ".txt", file_name = "";
+ for (int i = 0; i < 500; ++i) {
+ // Combine variables into a stringstream.
+ s_out << setw (5) << setfill('0') << i << ext;
+ file_name = s_out.str (); // Get a string.
+ s_out.str(""); // Empty stream for next iteration.
+ cerr << file_name << endl;
+ }
+ stringstream s_in( file_name );
+ int i; string rest;
+ s_in >> i >> rest;
+ cerr << "Number: " << i << " rest is: " << rest;
+ return 0;
+ }
+----
+
+== 5. CMake find_path ve find_library
+* Harici bir kütüphane kullanabiliriz
+* Başlıklar ve ikili kitaplık dosyalarına ihtiyacınız var
+* Onları bulmanın kolay bir yolu var
+* *Başlıklar:(Headers)*
+
+[source,CMake]
+----
+ find_path( SOME_PKG_INCLUDE_DIR include/ some_file .h
+ <path1 > <path2 > ...)
+ include_directories(${SOME_PKG_INCLUDE_DIR})
+----
+* *Kitaplıklar:(Libraries)*
+
+[source,CMake]
+----
+ find_library(SOME_LIB
+ NAMES <some_lib >
+ PATHS <path1 > <path2 > ...)
+ target_link_libraries(target ${SOME_LIB})
+----
+
+=== 4.1. find_package
+
+* find_package birden çok find_path ve find_library fonksiyonlarını çağırır
+* *find_package(<pkg>)* kullanmak için CMake *Find<pkg>.cmake* klasöründe *CMAKE_MODULE_PATH* dosyasına sahip olmalı
+* *Find<pkg>.cmake* hangi kitaplıkların ve başlıkların *<pkg>* paketine ait olduğunu tanımlar
+* En popüler kitaplıklar için önceden tanımlanmış, ör. OpenCV, libpng vb.
+
+=== 4.2. CMakeLists.txt
+
+[source,CMake]
+----
+ cmake_minimum_required(VERSION 2.8)
+ project( first_project )
+
+ # CMake will search here for Find <pkg >.cmake files
+ SET( CMAKE_MODULE_PATH
+ ${PROJECT_SOURCE_DIR}/ cmake_modules )
+
+ # Search for Findsome_pkg.cmake file and load it
+ find_package(some_pkg )
+
+ # Add the include folders from some_pkg
+ include_directories(${some_pkg_INCLUDE_DIRS})
+
+ # Add the executable "main"
+ add_executable(main small_main .cpp)
+ # Tell the linker to bind these binary objects
+ target_link_libraries(main ${some_pkg_LIBRARIES})
+----
+
+=== 4.3. cmake_modules/Findsome_pkg.cmake
+
+[source,CMake]
+----
+ # Find the headers that we will need
+ find_path( some_pkg_INCLUDE_DIRS include/some_lib.h
+ <FOLDER_WHERE_TO_SEARCH >)
+ message(STATUS "headers: ${some_pkg_INCLUDE_DIRS}")
+
+ # Find the corresponding libraries
+ find_library( some_pkg_LIBRARIES
+ NAMES some_lib_name
+ PATHS <FOLDER_WHERE_TO_SEARCH >)
+ message(STATUS "libs: ${some_pkg_LIBRARIES}")
+----
+
+== Referanslar
+
+* Fluent C++: structs vs classes:
+https://goo.gl/NFo8HP [shortened]
+>>>>>>> fe3be6150d3b2a03dafcbde687e479d82fb25042
