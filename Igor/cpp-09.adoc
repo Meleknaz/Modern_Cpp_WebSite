@@ -5,7 +5,6 @@
 
 Bu seride 
 
-<<<<<<< HEAD
 * Genel Programlama(Generic programming)
 ** Template functions
 ** Template classes
@@ -397,34 +396,295 @@ throw logic_error (msg);
 
 == 6. OpenCV
 
+* Görüntü İşleme için popüler kütüphanedir.
+* OpenCV version 2 nin küçük bir kısmını kullanacağız
+* OpenCV'de bulunan tüm işlevleri kullanmak için *#include <opencv2/opencv.hpp>* tanımlanır
+* Namespace *cv::*
+* Daha fazla burada:: http://opencv.org/
 
+=== 6.1. Veri tipleri
+
+* OpenCV kendi türlerini kullanır
+* OpenCV, doğru türü seçmeniz konusunda size güveniyor
+* Türlerin isimleri kalıbı takip eder
+
+*CV_<bit_count><itentifier><num_of_channels>*
+
+* Örnek: RGB görüntüsü **CV_8UC3**:
+RGB için 3 kanallı 8-bit işaretsiz karakter
+* Örnek: Gri tonlamalı görüntü **CV_8UC1**'dir: yoğunluk için tek 8 bitlik işaretsiz karakter
+* *DataType* kullanmak daha iyidir
+* Örnek: *DataType <uint> :: type == CV_8UC1*
+
+
+=== 6.2. Temel Matris Türü
+* ‘‘Matrix’’ için her görüntü bir *cv::Mat*
+* *Mat image(rows, cols, DataType, Value);*
+* *Mat_<T> image(rows, cols, Value);*
+* *zeros* ile başlat:
+
+[source,C++]
+----
+ cv:: Mat image = cv:: Mat :: zeros (10, 10, CV_8UC3);
+ using Matf = cv::Mat_ <float >;
+ Matf image_float = Matf :: zeros (10, 10);
+
+----
+* *image.type();* ile tür tanımlayıcıyı alın
+* *image.rows, image.cols* ile boyut alın
+* *I/O - G/Ç:*
+** *imread* ile resmi oku
+** *imwrite* ile resim yaz
+** *imshow* ile resmi göster
+** Uzantıdan I/O - G/Ç yöntemini algılar
+
+=== 6.3. cv::Mat paylaşılan bir göstericidir(cv::Mat is a shared pointer)
+* *std::shared_ptr* kullanmaz, ancak aynı referans sayma ilkesini izler
+
+[source,C++]
+----
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+ int main () {
+ using Matf = cv::Mat_ <float >;
+ Matf image = Matf :: zeros (10, 10);
+ Matf image_no_copy = image; // Does not copy!
+ image_no_copy .at <float >(5, 5) = 42.42f;
+ std :: cout << image.at <float >(5, 5) << std :: endl;
+ Matf image_copy = image.clone (); // Copies image.
+ image_copy .at <float >(1, 1) = 42.42f;
+ std :: cout << image.at <float >(1, 1) << std :: endl;
+ }
+----
+
+[source,C++]
+----
+1 c++ -std=c++11 -o copy copy.cpp \
+2 `pkg -config --libs --cflags opencv `
+----
+
+=== 6.4. imread
+* Dosyadan resmi oku
+* Mat imread(const string& file, int mode=1)
+* Farklı modlar:
+** Değişmedi: *CV_LOAD_IMAGE_UNCHANGED < 0*
+** 1 kanal: *CV_LOAD_IMAGE_GRAYSCALE == 0*
+** 3 kanal: *CV_LOAD_IMAGE_COLOR> 0*
+
+[source,C++]
+----
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+ using namespace cv;
+ int main () {
+ Mat i1 = imread("logo_opencv.png",
+ CV_LOAD_IMAGE_GRAYSCALE );
+ Mat_ <uint8_t > i2 = imread("logo_opencv.png",
+ CV_LOAD_IMAGE_GRAYSCALE );
+ std :: cout << (i1.type () == i2.type ()) << std :: endl;
+ return 0;
+ } 
+----
+
+=== 6.5. imwrite
+* Resmi dosyaya yaz
+* Uzantıdan format tahmin ediliyor
+* *bool imwrite(const string& file,
+const Mat& img);*
+
+[source,C++]
+----
+ #include <opencv2/core/core.hpp>
+ #include <opencv2/highgui/highgui.hpp>
+ int main () {
+ cv:: Mat image = cv:: imread("logo_opencv.png",
+ CV_LOAD_IMAGE_COLOR );
+ cv:: imwrite("copy.jpg", image);
+ return 0;
+ }
+----
+
+=== 6.6. Float görüntüleri * .exr dosyalarına yazın
+* Kayan noktalı görüntüleri depolarken OpenCV, değerlerin [0, 1] aralığında olmasını bekler
+* Rasgele değerleri depolarken değerler kesilebilir
+* Bunu önlemek için * .exr dosyalarına kaydedin
+* Bu dosyalar, değerleri olduğu gibi saklayacak ve okuyacaktır.
+
+.Float images I / O örneği
+[source,C++]
+----
+ #include <iostream>
+ #include <opencv2/opencv.hpp>
+ #include <string>
+ int main () {
+ using Matf = cv::Mat_ <float>;
+ Matf image = Matf :: zeros (10, 10);
+ image.at <float >(5, 5) = 42.42f;
+ std :: string f = "test.exr";
+ cv:: imwrite(f, image);
+ Matf copy = cv:: imread(f, CV_LOAD_IMAGE_UNCHANGED );
+ std :: cout << copy.at <float >(5, 5) << std :: endl;
+ return 0;
+ }
+----
+
+[TIP]
+====
+ Bunun yerine png resimleri kullanırken ne olacağını deneyin
+====
+
+=== 6.7. imshow
+* Görüntüyü ekranda göster
+* Görüntüyü görüntülemek için bir pencereye ihtiyaç vardır
+* *void imshow(const string& window_name,
+const Mat& mat)*
+
+[source,C++]
+----
+ #include <opencv2/opencv.hpp>
+ int main () {
+ cv:: Mat image = cv:: imread("logo_opencv.png",
+ CV_LOAD_IMAGE_COLOR );
+ std :: string window_name = "Window name";
+ // Create a window.
+ cv:: namedWindow (window_name , cv:: WINDOW_AUTOSIZE );
+ cv:: imshow(window_name , image); // Show image.
+ cv:: waitKey (); // Don't close window instantly.
+ return 0;
+ }
+----
+
+=== 6.8. OpenCV vektör türü(OpenCV vector type)
+* OpenCV vektör türü: *cv::Vec<Type, SIZE>*
+* Birçok tip mevcut: *Vec3f, Vec3b, vb.*
+* Çok boyutlu görüntülerde pikseller için kullanılır: *mat.at<Vec3b>(row, col);*
+
+[source,C++]
+----
+ #include <opencv2/opencv.hpp >
+ #include <iostream >
+ using namespace cv;
+ int main () {
+ Mat mat = Mat :: zeros (10, 10, CV_8UC3);
+ std :: cout << mat.at <Vec3b >(5, 5) << std :: endl;
+ Mat_ <Vec3f > matf3 = Mat_ <Vec3f >:: zeros (10, 10);
+ std :: cout << matf3.at <Vec3f >(5, 5) << std :: endl;
+ }
+----
+
+[WARNING]
+====
+ Türleri karıştırmak acı vericidir!
+ OpenCV türü seçmeniz için size güveniyor
+ Bu, hatalara neden olabilir
+ OpenCV, cv :: Mat'ta depolanan baytları  kullanıcının sorduğu türe göre yorumlar (reinterpret_cast'e benzer)
+ Doğru türleri kullandığınızdan emin olun!
+ 
+[source,C++]
+----
+ #include <opencv2/opencv.hpp>
+ int main () {
+ cv:: Mat image = cv:: Mat :: zeros (800 , 600, CV_8UC3);
+ std :: string window_name = "Window name";
+ cv:: namedWindow (window_name , cv:: WINDOW_AUTOSIZE );
+ cv:: imshow(window_name , image);
+ cv:: waitKey ();
+ for (int r = 0; r < image.rows; ++r) {
+ for (int c = 0; c < image.cols; ++c) {
+ // WARNING! WRONG TYPE USED!
+ image.at <float >(r, c) = 1.0f;
+ }
+ }
+ cv:: imshow(window_name , image);
+ cv:: waitKey ();
+ return 0;
+ }
+----
+ 
+====
+
+=== 6.9. SIFT Açıklayıcıları(SIFT Descriptors)
+* SIFT: **S**cale **I**nvariant **F**eature **T**ransform(SIFT: Ölçek Değişmez Unsur Dönüşümü)
+* Popüler özellikler: aydınlatma, döndürme ve çevirme değişmez (bir dereceye kadar)
+
+image::images/opencv.png[]
+
+=== 6.10. OpenCV ile SIFT Ekstraksiyonu
+* **SiftFeatureDetector**, anahtar noktaları tespit etmek için
+* *SiftDescriptorExtractor* anahtar noktalarında tanımlayıcıları hesaplamak için
+
+[source,C++]
+----
+ // Detect key points.
+ SiftFeatureDetector detector;
+ vector <KeyPoint > keypoints ;
+ detector.detect(input , keypoints );
+ // Show the keypoints on the image.
+ Mat image_with_keypoints ;
+ drawKeypoints (input , keypoints , image_with_keypoints );
+ // Extract the SIFT descriptors.
+ SiftDescriptorExtractor extractor ;
+ extractor .compute(input , keypoints , descriptors );
+----
+
+=== 6.11. OpenCV'de FLANN
+* FLANN: **F**ast **L**ibrary for **A**pproximate
+**N**earest **N**eighbors(FLANN: Yaklaşık En Yakın Komşular için Hızlı Kitaplık)
+* K-d ağacı inşa et, orada komşu ara(build K-d tree, search for neighbors there)
+
+[source,C++]
+----
+ // Create a kdtree for searching the data.
+ cv:: flann :: KDTreeIndexParams index_params ;
+ cv:: flann :: Index kdtree(data , index_params );
+ ...
+ // Search the nearest vector to some query
+ int k = 1;
+ Mat nearest_vector_idx (1, k, DataType <int >:: type);
+ Mat nearest_vector_dist (1, k, DataType <float >:: type);
+ kdtree. knnSearch (query , nearest_vector_idx ,
+ nearest_vector_dist , k);
+----
+
+=== 6.12. CMake ile OpenCV 2
+* OpenCV 2'yi sisteme yükleyin
+
+[source,bash]
+----
+1 sudo add -apt - repository ppa:xqms/opencv -nonfree
+2 sudo apt update
+3 sudo apt install libopencv -dev libopencv -nonfree -dev
+----
+
+* Find_package kullanarak bul (OpenCV 2 GEREKLİ)
+
+[source,bash]
+----
+1 find_package(OpenCV 2 REQUIRED )
+----
+
+* $ {OpenCV_INCLUDE_DIRS} dahil et
+* $ {OpenCV_LIBS} ile bağlantı
+
+[source,C++]
+----
+ add_library(some_lib some_lib_file .cpp)
+ target_link_libraries(some_lib ${OpenCV_LIBS})
+ add_executable( some_program some_file .cpp)
+ target_link_libraries( some_program ${OpenCV_LIBS})
+----
+
+=== 6.13. Ek OpenCV bilgileri
+* OpenCV sürüm 2 kullanıyoruz
+* 3. sürümü çalıştırmak hatalara yol açacaktır
+* SIFT ve FLANN kullanımı hakkında ek bilgi içeren örnek proje burada bulunabilir:
+https://gitlab.igg.uni-bonn.de/teaching/example_opencv
 
 == Referanslar
 
 Generic programming:
 https://www.geeksforgeeks.org/generics-in-c/
 
-=======
-* Generic programming
-* Template functions
-* Template classes
-* Iterators
-* Error handling
-* Program input parameters
-* OpenCV
-** cv::Mat
-** cv::Mat I/O
-* SIFT Extraction
-* FLANN in OpenCV
-* OpenCV with CMake 
-
-örneklerle anlatılmaktadır.
-
-== 2. GİRİŞ
-
-== Referanslar
-
->>>>>>> fe3be6150d3b2a03dafcbde687e479d82fb25042
 Macros:
 http://en.cppreference.com/w/cpp/preprocessor/replace
 
